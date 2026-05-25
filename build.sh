@@ -10,8 +10,14 @@ fi
 source config.sh
 
 # Inputs
-VARIANT=${1:-$DEFAULT_VARIANT}
+INPUT_VARIANT=${1:-$DEFAULT_VARIANT}
 RELEASE_TYPE=${2:-$DEFAULT_RELEASE_TYPE}
+
+if [ "$RELEASE_TYPE" == "Release" ]; then
+    VARIANTS=("Vanilla" "KSU_SUSFS")
+else
+    VARIANTS=("$INPUT_VARIANT")
+fi
 
 WORKDIR="$(pwd)"
 OUTDIR="$WORKDIR/out"
@@ -87,10 +93,20 @@ LINUX_VERSION=$(make kernelversion)
 LINUX_VERSION_CODE=${LINUX_VERSION//./}
 k_lastcommit=$(git rev-parse --short HEAD)
 
-rm -rf "$OUTDIR"
-mkdir -p "$OUTDIR"
+ZIP_FILES=()
 
-# KSUN and SUSFS
+for VARIANT in "${VARIANTS[@]}"; do
+    echo "-> Building Variant: $VARIANT"
+    cd "$KSRC"
+    
+    # Reset kernel source to clean state
+    git checkout . -f
+    git clean -fd
+    
+    rm -rf "$OUTDIR"
+    mkdir -p "$OUTDIR"
+
+    # KSUN and SUSFS
 if [ "$VARIANT" == "KSUN_SUSFS" ]; then
     echo "-> Setting up KernelSU-Next and SUSFS..."
     # Remove existing KSUN
@@ -206,27 +222,19 @@ sed -i "s/supported_kver=.*/supported_kver='5.10'/g" AnyKernel3/anykernel.sh
 rm -f AnyKernel3/Image AnyKernel3/Image.gz AnyKernel3/Image-dtb AnyKernel3/dtb AnyKernel3/*.zip
 cp "$KERNEL_IMAGE" AnyKernel3/
 
-cd AnyKernel3
-zip -r9 "../${AK3_ZIP_NAME}" * -x .git README.md *placeholder
-cd ..
+    cd AnyKernel3
+    zip -r9 "../${AK3_ZIP_NAME}" * -x .git README.md *placeholder
+    cd ..
+    ZIP_FILES+=("${AK3_ZIP_NAME}")
 
-# Release
-if [ "$RELEASE_TYPE" == "Release" ] && command -v gh &> /dev/null && [ -n "$GH_TOKEN" ]; then
-    gh release create "${AK3_ZIP_NAME%.*}" "${AK3_ZIP_NAME}" \
-        --repo "$RELEASE_REPO" \
-        --title "Kernel Release ${AK3_ZIP_NAME%.*}" \
-        --notes "GKI Kernel Release
-**Variant:** ${VARIANT}"
-fi
+    # Set proper caption based on Build Type
+    if [ "$RELEASE_TYPE" == "Release" ]; then
+      HEADER="📦 <b>New Kernel Release!</b>"
+    else
+      HEADER="🧪 <b>New CI Build!</b>"
+    fi
 
-# Set proper caption based on Build Type
-if [ "$RELEASE_TYPE" == "Release" ]; then
-  HEADER="📦 <b>New Kernel Release!</b>"
-else
-  HEADER="🧪 <b>New CI Build!</b>"
-fi
-
-MSG=$(cat << EOF
+    MSG=$(cat << EOF
 ${HEADER}
 
 <b>Version:</b> <code>${LINUX_VERSION}</code>
@@ -235,6 +243,16 @@ ${HEADER}
 <b>Compiler:</b> <code>${COMPILER_STRING}</code>
 EOF
 )
+    tg_send_doc "${AK3_ZIP_NAME}" "$MSG"
+done
 
-tg_send_doc "${AK3_ZIP_NAME}" "$MSG"
+# Release (Upload all variants to the same release)
+if [ "$RELEASE_TYPE" == "Release" ] && command -v gh &> /dev/null && [ -n "$GH_TOKEN" ]; then
+    echo "-> Creating GitHub Release..."
+    gh release create "${RELEASE}" "${ZIP_FILES[@]}" \
+        --repo "$RELEASE_REPO" \
+        --title "${KERNEL_NAME} ${RELEASE}" \
+        --notes "GKI Kernel Release for <code>${LINUX_VERSION}</code>"
+fi
+
 echo "-> All tasks completed successfully!"
