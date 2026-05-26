@@ -14,7 +14,7 @@ INPUT_VARIANT=${1:-$DEFAULT_VARIANT}
 RELEASE_TYPE=${2:-$DEFAULT_RELEASE_TYPE}
 
 if [ "$RELEASE_TYPE" == "Release" ]; then
-    VARIANTS=("Vanilla" "KSU_SUSFS")
+    VARIANTS=("Vanilla" "KSUN_SUSFS")
 else
     VARIANTS=("$INPUT_VARIANT")
 fi
