@@ -4,12 +4,12 @@
 # ==========================================
 # 1. Project Configuration
 # ==========================================
-KERNEL_NAME="FleurX-GKI"
-KERNEL_SOURCE="https://github.com/zylhdrXP/android_kernel_common-5.10"
-KERNEL_BRANCH="android12-5.10"
-KBUILD_USER="heydr"
-KBUILD_HOST="zylhdrxp"
-TIMEZONE="Asia/Jakarta"
+KERNEL_NAME="Kitsune-SpiritFox"
+KERNEL_SOURCE="https://github.com/zerotwo-project/android_kernel_xiaomi_sm7435"
+KERNEL_BRANCH="Test"
+KBUILD_USER="zerotwo"
+KBUILD_HOST="ZeroTwo"
+TIMEZONE="Asia/Kolkata"
 
 # ==========================================
 # 2. AnyKernel3 Configuration
@@ -18,14 +18,9 @@ ANYKERNEL_REPO="https://github.com/zylhdrXP/AnyKernel3"
 ANYKERNEL_BRANCH="gki"
 
 # ==========================================
-# 3. Toolchain Configuration
-# ==========================================
-CLANG_URL="https://github.com/Neutron-Toolchains/clang-build-catalogue/releases/download/17062026/neutron-clang-17062026.tar.zst"
-
-# ==========================================
 # 4. GitHub Release Configuration
 # ==========================================
-RELEASE_REPO="zylhdrXP/FleurX-GKI-Release"
+RELEASE_REPO="zerotwo-alt/Kitsune-SpiritFox-Release"
 
 # ==========================================
 # 5. Default Build Options
