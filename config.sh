@@ -18,6 +18,11 @@ ANYKERNEL_REPO="https://github.com/zylhdrXP/AnyKernel3"
 ANYKERNEL_BRANCH="gki"
 
 # ==========================================
+# 3. Toolchain Configuration
+# ==========================================
+CLANG_URL="https://github.com/Neutron-Toolchains/clang-build-catalogue/releases/download/17062026/neutron-clang-17062026.tar.zst"
+
+# ==========================================
 # 4. GitHub Release Configuration
 # ==========================================
 RELEASE_REPO="zerotwo-alt/Kitsune-SpiritFox-Release"
