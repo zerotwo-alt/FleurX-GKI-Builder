@@ -6,7 +6,7 @@
 # ==========================================
 KERNEL_NAME="Kitsune-SpiritFox"
 KERNEL_SOURCE="https://github.com/zerotwo-project/android_kernel_xiaomi_sm7435"
-KERNEL_BRANCH="16.2"
+KERNEL_BRANCH="Build"
 KBUILD_USER="zerotwo"
 KBUILD_HOST="ZeroTwo"
 TIMEZONE="Asia/Kolkata"
